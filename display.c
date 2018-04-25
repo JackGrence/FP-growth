@@ -78,7 +78,8 @@ print_min_heap (heap_ary *heap)
   if (!DEBUG_PRINT)
     return;
   int i;
-  for (i = 0; i < heap->ary_len; i++)
+  // ary is start from 1
+  for (i = 0; i <= heap->ary_len; i++)
     {
       printf ("[%d %d] ", heap->ary[i].itemID, heap->ary[i].frequent);
     }
