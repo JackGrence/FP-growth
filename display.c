@@ -73,13 +73,13 @@ print_rgbList (rgb_list *rgbList)
 }
 
 void
-print_max_heap (heap_ary *heap)
+print_min_heap (heap_ary *heap)
 {
   if (!DEBUG_PRINT)
     return;
   int i;
   for (i = 0; i < heap->ary_len; i++)
     {
-      printf ("%d %d\n", heap->ary[i].itemID, heap->ary[i].frequent);
+      printf ("[%d %d] ", heap->ary[i].itemID, heap->ary[i].frequent);
     }
 }

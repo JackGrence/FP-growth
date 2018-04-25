@@ -14,6 +14,6 @@ void print_tableList (table_list *tableL);
 void calc_time (const char *msg);
 void print_intList (int_list *intList);
 void print_rgbList (rgb_list *rgbList);
-void print_max_heap (heap_ary *heap);
+void print_min_heap (heap_ary *heap);
 
 #endif /* ifndef DISPLAY */
