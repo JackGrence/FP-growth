@@ -154,3 +154,13 @@ reverse_rgbList (rgb_list * rgbList, rgb_list * prevList)
   while (cur_list != NULL);
   return prevList;
 }
+
+void
+clear_tableL_val (table_list *tableL, int val)
+{
+  while (tableL != NULL)
+    {
+      memset (tableL->table, val, sizeof (int) * TABLE_LIST_SIZE);
+      tableL = tableL->next_table;
+    }
+}

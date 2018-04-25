@@ -45,6 +45,7 @@ void free_tableList (table_list * victim);
 void tableL_insert (int val, table_list * des, bool needcount);
 int get_tableL_val (int ind, table_list * tableL);
 int set_tableL_val (int ind, table_list * tableL, int val);
+void clear_tableL_val (table_list * tableL, int val);
 int_list *create_intList (void);
 void free_intList (int_list * intList);
 int_list *add_intList (int_list * intList, int val);
