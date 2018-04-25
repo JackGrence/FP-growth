@@ -89,12 +89,16 @@ print_min_heap (heap_ary *heap)
 void
 print_fp_tree (fp_tree *tree)
 {
+  if (!DEBUG_PRINT)
+    return;
   print_fp_node (tree->root);
 }
 
 void
 print_fp_node (fp_node *node)
 {
+  if (!DEBUG_PRINT)
+    return;
   int i;
   printf ("%d ", node->index);
   for (i = 0; i < node->childs_len; i++)
