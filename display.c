@@ -3,6 +3,7 @@
 #include <time.h>
 #include "linklist.h"
 #include "display.h"
+#include "fp_tree.h"
 
 void
 print_ary (int *ary, int len)
@@ -82,5 +83,26 @@ print_min_heap (heap_ary *heap)
   for (i = 0; i <= heap->ary_len; i++)
     {
       printf ("[%d %d] ", heap->ary[i].itemID, heap->ary[i].frequent);
+    }
+}
+
+void
+print_fp_tree (fp_tree *tree)
+{
+  print_fp_node (tree->root);
+}
+
+void
+print_fp_node (fp_node *node)
+{
+  int i;
+  printf ("%d ", node->index);
+  for (i = 0; i < node->childs_len; i++)
+    {
+      if (node->childs[i] != NULL)
+	{
+	  print_fp_node (node->childs[i]);
+	  printf ("\n");
+	}
     }
 }

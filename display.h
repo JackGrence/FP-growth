@@ -1,6 +1,7 @@
 #include <time.h>
 #include "linklist.h"
 #include "heap_sort.h"
+#include "fp_tree.h"
 
 #ifndef DISPLAY
 #define DISPLAY
@@ -15,5 +16,7 @@ void calc_time (const char *msg);
 void print_intList (int_list *intList);
 void print_rgbList (rgb_list *rgbList);
 void print_min_heap (heap_ary *heap);
+void print_fp_tree (fp_tree *tree);
+void print_fp_node (fp_node *node);
 
 #endif /* ifndef DISPLAY */
