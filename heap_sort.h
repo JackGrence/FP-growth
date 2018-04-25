@@ -30,9 +30,8 @@ int heap_test (void);
 
 heap_ary *create_heap_ary (int ary_size);
 void free_heap_ary (heap_ary *heap_ary_ptr);
-void insert_max_heap (heap_ary *heap, heap_node *node);
-void sort_max_heap (heap_ary *heap);
-
-static void swap (int *a, int *b);
+void insert_min_heap (heap_ary *heap, heap_node *node);
+int sort_min_heap (heap_ary *heap);
+void pop_min_heap (heap_ary *heap);
 
 #endif /* ifndef HEAP_SORT */
