@@ -91,21 +91,21 @@ print_fp_tree (fp_tree *tree)
 {
   if (!DEBUG_PRINT)
     return;
-  print_fp_node (tree->root);
+  print_fp_node (tree->root, tree->order_to_ID->ary);
 }
 
 void
-print_fp_node (fp_node *node)
+print_fp_node (fp_node *node, heap_node *order_to_ID)
 {
   if (!DEBUG_PRINT)
     return;
   int i;
-  printf ("[%d %d]", node->index, node->count);
+  printf ("[%d %d]", order_to_ID[node->index + 1].itemID, node->count);
   for (i = 0; i < node->childs_len; i++)
     {
       if (node->childs[i] != NULL)
 	{
-	  print_fp_node (node->childs[i]);
+	  print_fp_node (node->childs[i], order_to_ID);
 	  printf ("\n");
 	}
     }

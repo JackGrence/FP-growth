@@ -17,6 +17,6 @@ void print_intList (int_list *intList);
 void print_rgbList (rgb_list *rgbList);
 void print_min_heap (heap_ary *heap);
 void print_fp_tree (fp_tree *tree);
-void print_fp_node (fp_node *node);
+void print_fp_node (fp_node *node, heap_node *order_to_ID);
 
 #endif /* ifndef DISPLAY */
