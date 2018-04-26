@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include "heap_sort.h"
 
 #ifndef FP_TREE
 #define FP_TREE
@@ -44,6 +45,7 @@ struct _fp_tree
   fp_node *root;
   item_set *freq_item_set;
   fp_node_link_list **header_table;
+  heap_ary *order_to_ID;
 };
 
 

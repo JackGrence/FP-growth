@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "fp_tree.h"
+#include "heap_sort.h"
 
 void
 fp_tree_insert (int *insert_item, int item_size, fp_tree *tree)
@@ -20,7 +21,7 @@ fp_tree_insert (int *insert_item, int item_size, fp_tree *tree)
 	  insert_fp_node_link_list (tree->header_table[insert_item[i]],
 				    node->childs[hash_index]);
 	}
-      node->count++;
+      node->childs[hash_index]->count++;
       node->childs[hash_index]->parent = node;
       node = node->childs[hash_index];
     }
@@ -120,6 +121,9 @@ free_fp_tree (fp_tree *ptr)
   for (i = 0; i < HASH_FUNC_MOD; i++)
     free_fp_node_link_list (ptr->header_table[i]);
   free (ptr->header_table);
+
+  if (ptr->order_to_ID != NULL)
+    free_heap_ary (ptr->order_to_ID);
 
   free (ptr);
 }
