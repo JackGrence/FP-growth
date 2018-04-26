@@ -69,7 +69,7 @@ fp_is_empty (fp_node *node)
 }
 
 fp_tree *
-create_fp_tree (item_set *freq_item_set)
+create_fp_tree (item_set *freq_item_set, int header_table_len)
 {
   int i;
 
@@ -79,8 +79,9 @@ create_fp_tree (item_set *freq_item_set)
   new_fp_tree->freq_item_set =
     create_item_set (freq_item_set->items, freq_item_set->size);
 
+  new_fp_tree->header_table_len = header_table_len;
   new_fp_tree->header_table =
-    (fp_node_link_list **) calloc (HASH_FUNC_MOD,
+    (fp_node_link_list **) calloc (header_table_len,
 				   sizeof (fp_node_link_list *));
   for (i = 0; i < HASH_FUNC_MOD; i++)
     {

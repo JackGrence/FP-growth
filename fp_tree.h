@@ -44,6 +44,7 @@ struct _fp_tree
 {
   fp_node *root;
   item_set *freq_item_set;
+  int header_table_len;
   fp_node_link_list **header_table;
   heap_ary *order_to_ID;
 };
@@ -51,7 +52,7 @@ struct _fp_tree
 
 item_set *create_item_set (int *item, int item_size);
 fp_node *create_fp_node (int index);
-fp_tree *create_fp_tree (item_set *freq_item_set);
+fp_tree *create_fp_tree (item_set *freq_item_set, int header_table_len);
 void free_item_set (item_set *ptr);
 void free_fp_node (fp_node *ptr);
 void free_fp_tree (fp_tree *ptr);
