@@ -100,7 +100,7 @@ print_fp_node (fp_node *node)
   if (!DEBUG_PRINT)
     return;
   int i;
-  printf ("%d ", node->index);
+  printf ("[%d %d]", node->index, node->count);
   for (i = 0; i < node->childs_len; i++)
     {
       if (node->childs[i] != NULL)
