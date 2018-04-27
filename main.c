@@ -28,13 +28,14 @@ main (int argc, char *argv[])
 
   begin = clock();
 
-  if (argc < 4)
+  if (argc < 3)
     {
-      printf ("Usage: ./fp-growth FILE.data MIN_SUP OUTPUT_FILE_NAME\n");
+      printf ("Usage: ./fp-growth FILE.data MIN_SUP [OUTPUT_FILE_NAME]\n");
       exit (1);
     }
 
-  OUTPUT_FILE = fopen (argv[3], "w");
+  if (argc >= 4)
+    OUTPUT_FILE = fopen (argv[3], "w");
   MIN_SUP = atoi(argv[2]);
   FILE_NAME = argv[1];
 
@@ -48,21 +49,21 @@ main (int argc, char *argv[])
   // set fp tree's max child len
   HASH_FUNC_MOD = sorted_heap_ary->ary_len;
 
-  printf ("%d\n", sorted_heap_ary->ary_len);
-
   first_tree = get_fp_tree (id_to_order, sorted_heap_ary->ary_len);
   first_tree->order_to_ID = sorted_heap_ary;
 
   item_num = 0;
   fp_growth (first_tree);
-  fclose (OUTPUT_FILE);
+  if (argc >= 4)
+    fclose (OUTPUT_FILE);
 
   calc_time ("finish");
   printf ("frq: %d\n", item_num);
 
   free_tableList (id_to_order);
-  free_fp_tree (first_tree);
   printf ("free fp_tree\n");
+  free_fp_tree (first_tree);
+  printf ("Please press any key to exit.");
   getchar();
   return 0;
 }
@@ -257,13 +258,17 @@ fp_growth (fp_tree *tree)
 	}
 
       // record item: frq
-      for (ary_ind = 0; ary_ind < tree->freq_item_set->size; ary_ind++)
+      if (OUTPUT_FILE != NULL)
 	{
-	  fprintf (OUTPUT_FILE, "%d, ", tree->freq_item_set->items[ary_ind]);
+	  for (ary_ind = 0; ary_ind < tree->freq_item_set->size; ary_ind++)
+	    {
+	      fprintf (OUTPUT_FILE, "%d, ",
+		       tree->freq_item_set->items[ary_ind]);
+	    }
+	  fprintf (OUTPUT_FILE, "%d: %d\n",
+		   tree->order_to_ID->ary[cur_node->index + 1].itemID,
+		   id_count_ary[cur_node->index]);
 	}
-      fprintf (OUTPUT_FILE, "%d: %d\n",
-	       tree->order_to_ID->ary[cur_node->index + 1].itemID,
-	       id_count_ary[cur_node->index]);
 
       item_num++;
 
@@ -288,8 +293,10 @@ fp_growth (fp_tree *tree)
 
       // generate new tree
       // get new tree's frequent item set
-      memcpy (item_ary, tree->freq_item_set->items, (new_item_size - 1) * sizeof (int));
-      item_ary[new_item_size - 1] = tree->order_to_ID->ary[cur_node->index + 1].itemID;
+      memcpy (item_ary, tree->freq_item_set->items,
+	      (new_item_size - 1) * sizeof (int));
+      item_ary[new_item_size - 1] =
+	tree->order_to_ID->ary[cur_node->index + 1].itemID;
 
       new_tree = create_fp_tree (create_item_set (item_ary, new_item_size),
 				 new_order->ary_len);
