@@ -6,7 +6,7 @@
 #include "heap_sort.h"
 
 void
-fp_tree_insert (int *insert_item, int item_size, fp_tree *tree)
+fp_tree_insert (int *insert_item, int item_size, fp_tree *tree, int count)
 {
   int hash_index;
   int i;
@@ -21,7 +21,7 @@ fp_tree_insert (int *insert_item, int item_size, fp_tree *tree)
 	  insert_fp_node_link_list (tree->header_table[insert_item[i]],
 				    node->childs[hash_index]);
 	}
-      node->childs[hash_index]->count++;
+      node->childs[hash_index]->count += count;
       node->childs[hash_index]->parent = node;
       node = node->childs[hash_index];
     }
@@ -83,7 +83,7 @@ create_fp_tree (item_set *freq_item_set, int header_table_len)
   new_fp_tree->header_table =
     (fp_node_link_list **) calloc (header_table_len,
 				   sizeof (fp_node_link_list *));
-  for (i = 0; i < HASH_FUNC_MOD; i++)
+  for (i = 0; i < header_table_len; i++)
     {
       new_fp_tree->header_table[i] = create_fp_node_link_list ();
     }
@@ -119,7 +119,7 @@ free_fp_tree (fp_tree *ptr)
   free_fp_node (ptr->root);
   free_item_set (ptr->freq_item_set);
 
-  for (i = 0; i < HASH_FUNC_MOD; i++)
+  for (i = 0; i < ptr->header_table_len; i++)
     free_fp_node_link_list (ptr->header_table[i]);
   free (ptr->header_table);
 

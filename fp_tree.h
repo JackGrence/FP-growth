@@ -56,7 +56,7 @@ fp_tree *create_fp_tree (item_set *freq_item_set, int header_table_len);
 void free_item_set (item_set *ptr);
 void free_fp_node (fp_node *ptr);
 void free_fp_tree (fp_tree *ptr);
-void fp_tree_insert (int *insert_item, int item_size, fp_tree *tree);
+void fp_tree_insert (int *insert_item, int item_size, fp_tree *tree, int count);
 bool fp_is_empty (fp_node *node);
 fp_node_link_list *create_fp_node_link_list (void);
 void insert_fp_node_link_list (fp_node_link_list *list, fp_node *node);
