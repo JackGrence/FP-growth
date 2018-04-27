@@ -9,18 +9,18 @@
 #include "fp_tree.h"
 
 int get_transactions (FILE *f, int **ary);
-heap_ary *get_sorted_frequent_item_ary (FILE *f, table_list *C1);
-fp_tree *get_fp_tree (FILE *f, table_list *id_to_order, int order_ary_len);
+heap_ary *get_sorted_frequent_item_ary (table_list *C1);
+fp_tree *get_fp_tree (table_list *id_to_order, int order_ary_len);
 void fp_growth (fp_tree *tree);
 
 static char *FILE_NAME;
+static FILE *OUTPUT_FILE;
 static int MIN_SUP;
 static int item_num;
 
 int
 main (int argc, char *argv[])
 {
-  FILE *f;
   int i;
   table_list *id_to_order;
   heap_ary *sorted_heap_ary;
@@ -28,25 +28,19 @@ main (int argc, char *argv[])
 
   begin = clock();
 
-  if (argc < 3)
+  if (argc < 4)
     {
-      printf ("Usage: ./fp-growth FILE MIN_SUP\n");
+      printf ("Usage: ./fp-growth FILE.data MIN_SUP OUTPUT_FILE_NAME\n");
       exit (1);
     }
 
+  OUTPUT_FILE = fopen (argv[3], "w");
   MIN_SUP = atoi(argv[2]);
   FILE_NAME = argv[1];
 
-  f = fopen (FILE_NAME, "rb");
-  if (f == NULL)
-    {
-      printf ("Open file error.\nexit...\n");
-      exit (1);
-    }
-
   // generate itemID to sorted order table List
   id_to_order = create_tableList ();
-  sorted_heap_ary = get_sorted_frequent_item_ary (f, id_to_order);
+  sorted_heap_ary = get_sorted_frequent_item_ary (id_to_order);
   clear_tableL_val (id_to_order, -1);
   for (i = 0; i < sorted_heap_ary->ary_len; i++)
     set_tableL_val (sorted_heap_ary->ary[i + 1].itemID, id_to_order, i);
@@ -54,25 +48,17 @@ main (int argc, char *argv[])
   // set fp tree's max child len
   HASH_FUNC_MOD = sorted_heap_ary->ary_len;
 
-  f = fopen (FILE_NAME, "rb");
-  if (f == NULL)
-    {
-      printf ("Open file error.\nexit...\n");
-      exit (1);
-    }
-
   printf ("%d\n", sorted_heap_ary->ary_len);
 
-  first_tree = get_fp_tree (f, id_to_order, sorted_heap_ary->ary_len);
+  first_tree = get_fp_tree (id_to_order, sorted_heap_ary->ary_len);
   first_tree->order_to_ID = sorted_heap_ary;
 
   item_num = 0;
   fp_growth (first_tree);
+  fclose (OUTPUT_FILE);
 
   calc_time ("finish");
   printf ("frq: %d\n", item_num);
-
-  //print_fp_tree (first_tree);
 
   free_tableList (id_to_order);
   free_fp_tree (first_tree);
@@ -90,7 +76,11 @@ get_transactions (FILE *f, int **ary)
   if ((read_size = fread (&tid, sizeof (tid), 1, f)) == 0)	// read tid
     if (feof (f))
       return -1;
-  fread (&len, sizeof (len), 1, f);	// read len
+  if (fread (&len, sizeof (len), 1, f) != 1)	// read len
+    {
+      printf ("file format error\n");
+      exit (1);
+    }
   *ary = (int *) malloc (len * sizeof (int));
   read_size = fread (*ary, sizeof (int), len, f);
   if (len != read_size)
@@ -102,7 +92,7 @@ get_transactions (FILE *f, int **ary)
 }
 
 heap_ary *
-get_sorted_frequent_item_ary (FILE *f, table_list *C1)
+get_sorted_frequent_item_ary (table_list *C1)
 {
   int *t_ary;
   int i;
@@ -111,6 +101,14 @@ get_sorted_frequent_item_ary (FILE *f, table_list *C1)
   int sorted_heap_ary_len;
   heap_ary *min_heap;
   heap_node *tmp_node;
+
+  FILE *f;
+  f = fopen (FILE_NAME, "rb");
+  if (f == NULL)
+    {
+      printf ("Open file error.\nexit...\n");
+      exit (1);
+    }
   
   /* generate C1 */
   while (len != -1)
@@ -139,11 +137,12 @@ get_sorted_frequent_item_ary (FILE *f, table_list *C1)
   sorted_heap_ary_len = sort_min_heap (min_heap);
   min_heap->ary_len = sorted_heap_ary_len;
 
+  fclose (f);
   return min_heap;
 }
 
 fp_tree *
-get_fp_tree (FILE *f, table_list *id_to_order, int order_ary_len)
+get_fp_tree (table_list *id_to_order, int order_ary_len)
 {
   int *t_ary;
   int len;
@@ -152,6 +151,14 @@ get_fp_tree (FILE *f, table_list *id_to_order, int order_ary_len)
   int order;
   int *insert_ary;
   fp_tree *tree;
+
+  FILE *f;
+  f = fopen (FILE_NAME, "rb");
+  if (f == NULL)
+    {
+      printf ("Open file error.\nexit...\n");
+      exit (1);
+    }
 
   tree = create_fp_tree (create_item_set (NULL, 0), order_ary_len);
   insert_ary = (int *) alloca (sizeof (int) * order_ary_len);
@@ -188,6 +195,7 @@ get_fp_tree (FILE *f, table_list *id_to_order, int order_ary_len)
       if (t_ary != NULL && len != -1)
 	free (t_ary);
     }
+  fclose (f);
   return tree;
 }
 
@@ -249,9 +257,14 @@ fp_growth (fp_tree *tree)
 	}
 
       // record item: frq
-      //print_ary (tree->freq_item_set->items, tree->freq_item_set->size);
-      //printf ("[%d]", tree->order_to_ID->ary[cur_node->index + 1].itemID);
-      //printf ("freq: %d\n", id_count_ary[cur_node->index]);
+      for (ary_ind = 0; ary_ind < tree->freq_item_set->size; ary_ind++)
+	{
+	  fprintf (OUTPUT_FILE, "%d, ", tree->freq_item_set->items[ary_ind]);
+	}
+      fprintf (OUTPUT_FILE, "%d: %d\n",
+	       tree->order_to_ID->ary[cur_node->index + 1].itemID,
+	       id_count_ary[cur_node->index]);
+
       item_num++;
 
       new_order->ary_len = sort_min_heap (new_order);
