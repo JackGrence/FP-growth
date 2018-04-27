@@ -84,6 +84,7 @@ print_min_heap (heap_ary *heap)
     {
       printf ("[%d %d] ", heap->ary[i].itemID, heap->ary[i].frequent);
     }
+  printf ("\n");
 }
 
 void
@@ -91,6 +92,16 @@ print_fp_tree (fp_tree *tree)
 {
   if (!DEBUG_PRINT)
     return;
+  int i;
+  printf ("header_table\n");
+  for (i = 0; i < tree->header_table_len; i++)
+    {
+      if (tree->header_table[i]->next != NULL)
+	{
+	  printf ("%p ", tree->header_table[i]->next->node);
+	}
+    }
+  printf ("\n----\n");
   print_fp_node (tree->root, tree->order_to_ID->ary);
 }
 
